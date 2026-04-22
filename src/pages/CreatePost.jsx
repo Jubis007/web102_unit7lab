@@ -1,9 +1,24 @@
 import { useState } from 'react'
 import './CreatePost.css'
+import { supabase } from '../client';
 
+// 1. The main component wrapper starts here!
 const CreatePost = () => {
-
+    
+    // 2. State variables must be inside the component
     const [post, setPost] = useState({title: "", author: "", description: ""})
+
+    // 3. createPost is inside the component so it can read post.title, etc.
+    const createPost = async (event) => {
+        event.preventDefault(); // Prevents the page from refreshing on submit
+
+        await supabase
+          .from('Posts')
+          .insert({ title: post.title, author: post.author, description: post.description })
+          .select();
+
+        window.location = "/"; // Redirects back to the home page
+    };
 
     const handleChange = (event) => {
         const {name, value} = event.target
@@ -15,6 +30,7 @@ const CreatePost = () => {
         })
     }
 
+    // 4. The return statement is safely inside the component!
     return (
         <div>
             <form>
@@ -30,10 +46,11 @@ const CreatePost = () => {
                 <textarea rows="5" cols="50" id="description" name="description" onChange={handleChange}>
                 </textarea>
                 <br/>
-                <input type="submit" value="Submit" />
+                
+                <input type="submit" value="Submit" onClick={createPost} />
             </form>
         </div>
     )
-}
+} // <-- End of the main component
 
-export default CreatePost
+export default CreatePost;
